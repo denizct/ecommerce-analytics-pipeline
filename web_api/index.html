@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teknoloji Mağazası</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 { color: #38bdf8; margin-bottom: 30px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .card {
+            background-color: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.2);
+        }
+        .card h3 { margin: 0 0 10px 0; font-size: 22px; }
+        .card .kategori { color: #94a3b8; font-size: 14px; margin-bottom: 15px; }
+        .card .fiyat { font-size: 24px; color: #34d399; font-weight: bold; }
+        .btn {
+            margin-top: 15px;
+            background-color: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        #bildirim {
+            margin-top: 25px;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Deniz Teknoloji Canlı Sipariş Simülatörü</h1>
+    
+    <div class="grid">
+        
+        <div class="card" onclick="siparisGonder('Bilgisayar', 'Teknoloji', 45000)">
+            <h3>💻 Bilgisayar</h3>
+            <div class="kategori">Teknoloji</div>
+            <div class="fiyat">45.000 TL</div>
+            <button class="btn">Sipariş Ver</button>
+        </div>
+
+        
+        <div class="card" onclick="siparisGonder('Telefon', 'Teknoloji', 30000)">
+            <h3>📱 Telefon</h3>
+            <div class="kategori">Teknoloji</div>
+            <div class="fiyat">30.000 TL</div>
+            <button class="btn">Sipariş Ver</button>
+        </div>
+
+       
+        <div class="card" onclick="siparisGonder('Tablet', 'Teknoloji', 15000)">
+            <h3>📟 Tablet</h3>
+            <div class="kategori">Teknoloji</div>
+            <div class="fiyat">15.000 TL</div>
+            <button class="btn">Sipariş Ver</button>
+        </div>
+    </div>
+
+    <div id="bildirim"></div>
+
+    <script>
+        function siparisGonder(urun, kategori, fiyat) {
+            const url = `/siparis?urun=${urun}&kategori=${kategori}&fiyat=${fiyat}&adet=1`;
+            
+            fetch(url, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    const b = document.getElementById('bildirim');
+                    b.style.display = 'block';
+                    b.style.backgroundColor = '#065f46';
+                    b.style.color = '#34d399';
+                    b.innerText = `✔ ${urun} Siparişi Başarıyla Alındı!`;
+                    setTimeout(() => b.style.display = 'none', 2000);
+                })
+                .catch(err => {
+                    const b = document.getElementById('bildirim');
+                    b.style.display = 'block';
+                    b.style.backgroundColor = '#991b1b';
+                    b.style.color = '#f87171';
+                    b.innerText = '❌ Sipariş gönderilemedi!';
+                });
+        }
+    </script>
+</body>
+</html>

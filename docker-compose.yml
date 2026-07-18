@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  redis_kuyruk:
+    image: redis:7-alpine
+    container_name: redis_kuyruk
+    networks:
+      - ecom-agi
+
+  #db
+  analiz_db:
+    image: postgres:15-alpine
+    container_name: analiz_db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db_init:/docker-entrypoint-initdb.d
+    networks:
+      - ecom-agi
+
+
+  web_api:
+    build: ./web_api
+    container_name: web_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis_kuyruk
+    networks:
+      - ecom-agi
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+
+  data_worker:
+    build: ./data_worker
+    container_name: data_worker
+    depends_on:
+      - redis_kuyruk
+      - analiz_db
+    networks:
+      - ecom-agi
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+
+
+  metabase-bi:
+    image: metabase/metabase:latest
+    container_name: metabase_analist
+    ports:
+      - "3000:3000"
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${DB_NAME}
+      MB_DB_PORT: 5432
+      MB_DB_USER: ${DB_USER}
+      MB_DB_PASS: ${DB_PASSWORD}
+      MB_DB_HOST: ${DB_HOST}
+    depends_on:
+      - analiz_db
+    networks:
+      - ecom-agi
+
+
+volumes:
+  pgdata:
+
+networks:
+  ecom-agi:
+    driver: bridge
