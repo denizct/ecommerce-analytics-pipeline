@@ -46,7 +46,7 @@ Gerçek zamanlı sipariş toplama ve analiz pipeline'ı. FastAPI tabanlı bir si
 
 ---
 
-## 🛠️ Kullanılan Teknolojiler
+##  Kullanılan Teknolojiler
 
 - **[FastAPI](https://fastapi.tiangolo.com/)** — Modern, hızlı Python web framework
 - **[Redis](https://redis.io/)** — In-memory mesaj kuyruğu
